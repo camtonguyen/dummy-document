@@ -86,6 +86,15 @@ Simply add `.md` files to the `docs/` directory:
 - **File Watching**: Chokidar
 - **Styling**: Vanilla CSS with modern design
 
+## Deployment
+
+Want to share your document viewer online? See the **[DEPLOY.md](DEPLOY.md)** guide for step-by-step instructions on:
+
+- 🌐 Creating a GitHub public repository
+- ⚡ Deploying to Vercel, Railway, or Render
+- 🚀 Getting a live public URL
+- 📝 Adding documents to your live site
+
 ## License
 
 MIT License - feel free to use and modify as needed!
