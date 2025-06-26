@@ -1,12 +1,12 @@
-# Welcome to Your Document Collection! 📚
+# Welcome to Document Collection! 📚
 
-This is your personal markdown document viewer and organizer. You can store and view all your `.md` files through a beautiful web interface.
+This is the markdown document viewer and organizer.
 
 ## How to Use
 
-1. **Adding Documents**: Place your markdown files in the `docs/` directory
+1. **Adding Documents**: Place markdown files in the `docs/` directory
 2. **Viewing Documents**: Start the server and browse to `http://localhost:3000`
-3. **Organization**: You can create subdirectories in `docs/` to organize your documents
+3. **Organization**: Create subdirectories in `docs/` to organize documents
 
 ## Features
 
@@ -48,7 +48,7 @@ function hello() {
 
 ### Links and Images
 
-[Links to other sites](https://example.com) work perfectly, and you can embed images too!
+[Links to other sites](https://example.com) work perfectly, and can embed images too!
 
 ### Tables
 
@@ -64,4 +64,4 @@ function hello() {
 
 ## Getting Started
 
-Start adding your own documents to the `docs/` folder and they'll automatically appear in the document list. Happy writing! ✍️
+Start adding documents to the `docs/` folder and they'll automatically appear in the document list. Happy writing! ✍️

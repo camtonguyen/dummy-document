@@ -67,9 +67,8 @@ app.get('/', async (req, res) => {
     <div class="container">
         <header>
             <h1>📚 Document Viewer</h1>
-            <p>Your markdown document collection</p>
+            <p>Markdown document collection</p>
         </header>
-        
         <div class="file-list">
             ${
               files.length === 0
@@ -87,7 +86,6 @@ app.get('/', async (req, res) => {
                     .join('')
             }
         </div>
-        
         <footer>
             <p>Add markdown files to the <code>docs/</code> directory to see them here.</p>
         </footer>
@@ -131,7 +129,6 @@ app.get('/doc/:filename(*)', async (req, res) => {
             <a href="/" class="back-link">← Back to Documents</a>
             <span class="file-name">${filename}</span>
         </nav>
-        
         <article class="markdown-content">
             ${html}
         </article>
