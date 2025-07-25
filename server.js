@@ -48,10 +48,44 @@ async function getMarkdownFiles(dir = DOCS_DIR) {
   }
 }
 
-// Home page - list all documents
+// Organize files by directory
+function organizeFilesByDirectory(files) {
+  const organized = {
+    All: files,
+    Root: [],
+  };
+
+  files.forEach((file) => {
+    const parts = file.split('/');
+    if (parts.length === 1) {
+      // File is in root directory
+      organized['Root'].push(file);
+    } else {
+      // File is in a subdirectory
+      const dir = parts[0];
+      if (!organized[dir]) {
+        organized[dir] = [];
+      }
+      organized[dir].push(file);
+    }
+  });
+
+  // Remove empty directories
+  Object.keys(organized).forEach((key) => {
+    if (organized[key].length === 0 && key !== 'All') {
+      delete organized[key];
+    }
+  });
+
+  return organized;
+}
+
+// Home page - list all documents with tabs and search
 app.get('/', async (req, res) => {
   try {
     const files = await getMarkdownFiles();
+    const organizedFiles = organizeFilesByDirectory(files);
+    const directories = Object.keys(organizedFiles);
 
     const html = `
 <!DOCTYPE html>
@@ -69,27 +103,161 @@ app.get('/', async (req, res) => {
             <h1>📚 Document Viewer</h1>
             <p>Markdown document collection</p>
         </header>
-        <div class="file-list">
+        
+        <div class="search-container">
+            <input 
+                type="text" 
+                id="searchInput" 
+                class="search-input" 
+                placeholder="🔍 Search documents..." 
+                autocomplete="off"
+            >
+        </div>
+        
+        <div class="tabs-container">
+            <div class="tabs">
+                ${directories
+                  .map(
+                    (dir, index) => `
+                    <button class="tab ${
+                      index === 0 ? 'active' : ''
+                    }" data-directory="${dir}">
+                        ${
+                          dir === 'Root'
+                            ? '📁 Root'
+                            : dir === 'All'
+                            ? '📚 All'
+                            : `📂 ${dir}`
+                        }
+                        <span class="tab-count">${
+                          organizedFiles[dir].length
+                        }</span>
+                    </button>
+                `
+                  )
+                  .join('')}
+            </div>
+        </div>
+        
+        <div class="file-list" id="fileList">
             ${
               files.length === 0
                 ? '<div class="no-files">No markdown files found. Add some .md files to the docs/ directory!</div>'
                 : files
-                    .map(
-                      (file) => `
-                <div class="file-item">
-                  <a href="/doc/${encodeURIComponent(file)}" class="file-link">
-                    📄 ${file}
-                  </a>
-                </div>
-              `
-                    )
+                    .map((file) => {
+                      const directory = file.includes('/')
+                        ? file.split('/')[0]
+                        : 'Root';
+                      return `
+                        <div class="file-item" data-filename="${file.toLowerCase()}" data-directory="${directory}" data-fullpath="${file}">
+                            <a href="/doc/${encodeURIComponent(
+                              file
+                            )}" class="file-link">
+                                📄 ${file.split('/').pop()}
+                                ${
+                                  file.includes('/')
+                                    ? `<div class="file-path">${file}</div>`
+                                    : ''
+                                }
+                            </a>
+                        </div>
+                    `;
+                    })
                     .join('')
             }
+            <div class="no-results" id="noResults">
+                No documents found matching your search criteria.
+            </div>
         </div>
+        
         <footer>
             <p>Add markdown files to the <code>docs/</code> directory to see them here.</p>
         </footer>
     </div>
+
+    <script>
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.tab');
+        const fileItems = document.querySelectorAll('.file-item');
+        const searchInput = document.getElementById('searchInput');
+        const noResults = document.getElementById('noResults');
+        
+        let currentDirectory = 'All';
+        let currentSearchTerm = '';
+        
+        // Tab click handlers
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                currentDirectory = tab.dataset.directory;
+                filterFiles();
+            });
+        });
+        
+        // Search functionality
+        searchInput.addEventListener('input', (e) => {
+            currentSearchTerm = e.target.value.toLowerCase().trim();
+            filterFiles();
+        });
+        
+        // Filter files based on current directory and search term
+        function filterFiles() {
+            let visibleCount = 0;
+            
+            fileItems.forEach(item => {
+                const filename = item.dataset.filename;
+                const directory = item.dataset.directory;
+                const fullPath = item.dataset.fullpath;
+                
+                // Check directory filter
+                const directoryMatch = currentDirectory === 'All' || 
+                                     (currentDirectory === 'Root' && directory === 'Root') ||
+                                     (directory === currentDirectory);
+                
+                // Check search filter
+                const searchMatch = currentSearchTerm === '' || 
+                                  filename.includes(currentSearchTerm) ||
+                                  fullPath.toLowerCase().includes(currentSearchTerm);
+                
+                if (directoryMatch && searchMatch) {
+                    item.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+            
+            // Show/hide no results message
+            if (visibleCount === 0 && fileItems.length > 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Focus search on Ctrl/Cmd + K
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            
+            // Clear search on Escape
+            if (e.key === 'Escape' && document.activeElement === searchInput) {
+                searchInput.value = '';
+                currentSearchTerm = '';
+                filterFiles();
+            }
+        });
+        
+        // Initial filter
+        filterFiles();
+    </script>
 </body>
 </html>`;
 

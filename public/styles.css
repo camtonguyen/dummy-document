@@ -296,3 +296,135 @@ footer code {
     font-size: 1.5rem;
   }
 }
+
+/* Search and Filter Styles */
+.search-container {
+  margin-bottom: 30px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 16px;
+  border: 2px solid #e1e8ed;
+  border-radius: 25px;
+  outline: none;
+  transition: border-color 0.3s ease;
+  background: #fff;
+}
+
+.search-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.search-input::placeholder {
+  color: #95a5a6;
+}
+
+/* Tab Styles */
+.tabs-container {
+  margin-bottom: 30px;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 20px;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tab:hover {
+  background: #f8f9ff;
+  color: #667eea;
+}
+
+.tab.active {
+  background: #667eea;
+  color: white;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #667eea;
+}
+
+/* File count badge */
+.tab-count {
+  background: rgba(255, 255, 255, 0.3);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.tab.active .tab-count {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.tab:not(.active) .tab-count {
+  background: #e1e8ed;
+  color: #666;
+}
+
+/* File list improvements */
+.file-item.hidden {
+  display: none;
+}
+
+.no-results {
+  text-align: center;
+  padding: 40px 20px;
+  color: #95a5a6;
+  font-size: 1.1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+  display: none;
+}
+
+.file-path {
+  font-size: 0.8rem;
+  color: #95a5a6;
+  font-family: 'Courier New', monospace;
+  margin-top: 5px;
+}
+
+/* Additional responsive styles for new features */
+@media (max-width: 768px) {
+  .tabs {
+    flex-direction: column;
+  }
+
+  .tab {
+    border-radius: 8px;
+    margin-bottom: 5px;
+  }
+
+  .tab.active::after {
+    display: none;
+  }
+
+  .search-input {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
